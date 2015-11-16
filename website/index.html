@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Yammersphere</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+  </head>
+  
+  <body>
+   
+    <div class="maindiv searchdiv">
+      <select id="search_box">
+        <option></option>
+      </select>
+    </div>
+    <div id="svgholder" class="maindiv">
+      <div id="tips">
+        <p><strong>Tips:</strong></p>
+        <p>Click on nodes to expand/contract</p>
+        <p>Use the search function at the top to search by either name or job title</p>
+        <p>Hover over names to load further details in the bottom panel</p>
+      </div>
+      
+    </div>
+    <div class="tooltip maindiv"></div>
+
+    
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-70160933-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+    
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.4/handlebars.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+
+  <script id="entry-template" type="text/x-handlebars-template">
+<div class="tooltip_parent">
+  <div class="tooltip_parent">
+    <div class="tooltip_row">
+      <div class="tooltip_left">
+        <img src="{{mugshot_url_template}}" class="tooltip_img"/>
+      </div>
+      <div class="tooltip_right">
+        <div class="tooltip_parent">
+          <div class="tooltip_row">
+            <div class="tooltip_left tooltip_nested">
+              <p class="tooltip_p"><strong>Name: </strong>{{full_name}}</p>
+              <p class="tooltip_p"><strong>Email: </strong>{{email_address}}</p>
+            </div>
+            <div class="tooltip_right tooltip_nested">
+              <p class="tooltip_p"><strong>Job title: </strong>{{job_title}}</p>
+              <p class="tooltip_p"><strong>Phone: </strong>{{phone_numbers}}</p>
+            </div>
+          </div>
+          </div>
+          <div class="tooltip_row">
+            <div class="tooltip_right">
+            <p class="tooltip_p"><strong>Summary: </strong>{{summary}}</p>
+            <p class="tooltip_p">Click <a href="{{web_url}}"> here </a> to visit my Yammer profile </p>
+          </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+
+  </script>
+  </script>
+  <script id="foreignobject-template" type="text/x-handlebars-template">
+  <div class="foreignobject_parent">
+    <div class="foreignobject_child_img" >
+      <img src="{{mugshot_url_template}}" class="foreignobject_img" style="width:{{imgwidth}}; height:{{imgheight}}; border: 2px solid {{bordercolour}}" data-id = "{{user_id}}"/>
+    </div>
+    <div class="foreignobject_child_text" >
+      <div style="height:{{totalheight}}; width:{{textwidth}};  overflow:hidden"><strong>{{full_name}}</strong>
+        <br/>({{job_title}})
+      </div>
+    </div>
+  </div>
+  </script>
+
+</html>
