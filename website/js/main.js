@@ -5,7 +5,7 @@ function organisation_chart(all_data, selection_string) {
     var NODE_HEIGHT = 35
     var NODE_SPACING = 10
     var FONT_SIZE = 10
-    var LINK_WIDTH = 220
+    var LINK_WIDTH = 250
 
     var all_data = all_data
     var duration = 750
@@ -17,10 +17,10 @@ function organisation_chart(all_data, selection_string) {
     var total_width = $(selection_string).width();
 
     var margin = {
-        top: 20,
-        right: 20,
-        bottom: 20,
-        left: 50
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: NODE_HEIGHT
     };
 
     var width = total_width - margin.right - margin.left;
@@ -260,7 +260,7 @@ function organisation_chart(all_data, selection_string) {
                 template_data.bordercolour = color_scale(d.messages_in_last_180_days)
                 template_data.user_id = d.id
                 template_data.font_size = FONT_SIZE
-                if (NODE_HEIGHT > 25) {
+                if (NODE_HEIGHT > FONT_SIZE) {
                 template_data.include_job_title = true
                 } else {
                     template_data.include_job_title = false

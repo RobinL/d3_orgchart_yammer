@@ -45,6 +45,12 @@ html, body {
 
 }
 
+.foreignobject_parent {
+    border-style: solid;
+    border-color: #C0C0C0;
+    border-width: 1px;
+}
+
 
 .foreignobject_parent {
     font: 12px sans-serif;
