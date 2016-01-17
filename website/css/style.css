@@ -53,7 +53,7 @@ table, th, td {
 .foreignobject_parent {
     border-style: solid;
     border-color: #BABABA;
-    border-width: 1px;
+    border-width: 0px;
 }
 
 
