@@ -232,6 +232,7 @@ function organisation_chart(all_data, selection_string) {
 
 
         node.select("foreignObject").attr("height",NODE_HEIGHT)
+        node.select("foreignObject").attr("width",LINK_WIDTH)
 
        
         node
