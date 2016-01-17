@@ -26,9 +26,11 @@ html, body {
 
 }
 
-table, th, td {
+table {
     border: 1px solid #BABABA;
     border-collapse: collapse;
+    font: 12px sans-serif;
+
 }
 
 .maindiv {
@@ -138,41 +140,8 @@ svg {
 }
 
 
-.tooltip_parent {
-    font: 12px sans-serif;
-    display: table;
-}
-
-.tooltip_row {
-    display:table-row;
-    }
-
-.tooltip_left, .tooltip_right {
-    display:table-cell;
-    vertical-align: middle;
-    margin-left: 10px;
-    padding-left: 10px;
-    }
-
-.tooltip_child_img, .tooltip_child_text {
-    display: table-cell;
-    }
-
-.tooltip_p {
-    margin-top: 5px;
-}
-    
 
 
-.tooltip_nested {
-    width: 50%;
-}
-
-
-.tooltip_child_text {
-    vertical-align: middle;
-    padding-left: 4px;
-}
 
 
 .tooltip_img {
