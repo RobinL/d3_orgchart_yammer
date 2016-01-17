@@ -96,7 +96,6 @@ function organisation_chart(all_data, selection_string) {
         }
 
         expand(root)
-        redraw(root)
 
     }
 
@@ -494,24 +493,25 @@ function organisation_chart(all_data, selection_string) {
 
     function create_profile_card(d) {
         var div = d3.select(".tooltip")
-        div.transition()
-            .duration(200)
-            .style("opacity", .9);
+
         div.html(function(d2) {
             var source = d3.select("#entry-template").html();
             var template = Handlebars.compile(source);
-
             var html = template(d);
             return html
         })
 
-        $('#orgchart_starting_here').on("click", function(d) {
-
+        $('#orgchart_starting_here').click(function(e) {
             userid = $(this).attr("data_user_id")
             change_root(userid)
-
+            redraw(root)
         });
 
+        $('#reset_orgchart').click(function(e) {
+            change_root(all_data.tree.id)
+            root.children.forEach(collapse);
+            redraw(root)
+        });
     }
 
     return {

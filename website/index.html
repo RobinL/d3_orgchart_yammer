@@ -29,7 +29,7 @@
     <div class="settings">
 
       <label for="MIN_HEIGHT">Min height</label>
-      <input type="range" id="MIN_HEIGHT" max="1000" min="0" value="100" />
+      <input type="range" id="MIN_HEIGHT" max="1000" min="0" value="400" />
 
       <label for="NODE_HEIGHT">Node height</label>
       <input type="range" id="NODE_HEIGHT" min="10" max="100" value="35" />
@@ -51,40 +51,42 @@
     <script src="js/main.js"></script>
   </body>
 
-  <script id="entry-template" type="text/x-handlebars-template">
-<div class="tooltip_parent">
-  <div class="tooltip_parent">
-    <div class="tooltip_row">
-      <div class="tooltip_left">
-        <img src="{{mugshot_url_template}}" class="tooltip_img"/>
-      </div>
-      <div class="tooltip_right">
-        <div class="tooltip_parent">
-          <div class="tooltip_row">
-            <div class="tooltip_left tooltip_nested">
-              <p class="tooltip_p"><strong>Name: </strong>{{full_name}}</p>
-              <p class="tooltip_p"><strong>Email: </strong>{{email_address}}</p>
-            </div>
-            <div class="tooltip_right tooltip_nested">
-              <p class="tooltip_p"><strong>Job title: </strong>{{job_title}}</p>
-              <p class="tooltip_p"><strong>Phone: </strong>{{phone_numbers}}</p>
-            </div>
-          </div>
-          </div>
-          <div class="tooltip_row">
-            <div class="tooltip_right">
-            <p class="tooltip_p"><strong>Summary: </strong>{{summary}}</p>
-            <p class="tooltip_p">Click <a href="{{web_url}}"> here </a> to visit my Yammer profile.  Click  <strong id="orgchart_starting_here" data_user_id={{id}}> here </strong> to generate an orgchart starting with me.</p>
-          </div>
-          </div>
-          
-        </div>
-      </div>
-    </div>
+<script id="entry-template" type="text/x-handlebars-template">
+<table class="">
+  <tr>
+    <td class="" rowspan="5"><img src="{{mugshot_url_template}}" class="tooltip_img"/></td>
+    <td class=""><strong>Name: </strong>{{full_name}}</td>
+    <td class=""><strong>Job title: </strong>{{job_title}}</td>
+  </tr>
+  <tr>
+    <td class=""><strong>Email: </strong>{{email_address}}</td>
+    <td class=""><strong>Phone: </strong>{{phone_numbers}}</td>
+  </tr>
+  <tr>
+    <td class="" colspan="2"><strong>Summary: </strong>{{summary}}</td>
+  </tr>
+  <tr>
+    <td class="" colspan="2">Click <a href="{{web_url}}"> here </a> to visit my Yammer profile. 
+  </tr>
+  <tr>
+    <td class="" colspan="2">  
+    Click  
+    <a href="javascript:void(0)"  id="orgchart_starting_here" data_user_id={{id}}>here</a> 
+    to generate an orgchart starting with me, expanding out all nodes.
+
+    or 
+    <a href="javascript:void(0)"  id="reset_orgchart">here</a> 
+    to reset the orgchart.
+
+    </td>
+  </tr>
+
+</table>
+</script>
 
 
-  </script>
-  </script>
+
+ 
   <script id="foreignobject-template" type="text/x-handlebars-template">
   <div class="foreignobject_parent">
     <div class="foreignobject_child_img" >

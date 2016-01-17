@@ -26,6 +26,11 @@ html, body {
 
 }
 
+table, th, td {
+    border: 1px solid #BABABA;
+    border-collapse: collapse;
+}
+
 .maindiv {
 
 
@@ -47,7 +52,7 @@ html, body {
 
 .foreignobject_parent {
     border-style: solid;
-    border-color: #C0C0C0;
+    border-color: #BABABA;
     border-width: 1px;
 }
 
@@ -122,11 +127,9 @@ html, body {
 }
 
 svg {
-          border: 2px;      
-    border-radius: 8px; 
+    border: 1px;      
     border-color: #BABABA;  
     border-style: solid;
- 
 }
 
 .foreignobj div {
@@ -134,14 +137,9 @@ svg {
 }
 
 
-
-
 .tooltip_parent {
     font: 12px sans-serif;
     display: table;
-    
-    
-
 }
 
 .tooltip_row {
@@ -151,9 +149,8 @@ svg {
 .tooltip_left, .tooltip_right {
     display:table-cell;
     vertical-align: middle;
-        margin-left: 10px;
-        padding-left: 10px;
-
+    margin-left: 10px;
+    padding-left: 10px;
     }
 
 .tooltip_child_img, .tooltip_child_text {
@@ -162,11 +159,9 @@ svg {
 
 .tooltip_p {
     margin-top: 5px;
-    
 }
     
 
-}
 
 .tooltip_nested {
     width: 50%;
@@ -208,6 +203,6 @@ select {
     width: 200px;
     margin:10px;
     color: #BCBCBC;
-    visibility: hidden;
+
 
 }
