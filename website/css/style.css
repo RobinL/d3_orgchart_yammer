@@ -28,18 +28,12 @@ html, body {
 
 .maindiv {
 
-    width:90%;
 
-    
     margin-left:auto;
     margin-right:auto;
     margin-bottom: 10px;
     margin-top:10px;
 
-    border: 2px;      
-    border-radius: 8px; 
-    border-color: #BABABA;  
-    border-style: solid;
 
 }
 
@@ -72,7 +66,7 @@ html, body {
 
 
  .foreignobject_child_text {
-    width:100px;
+
     text-shadow: 1px 1px 0 #fff,
     -1px 1px 0 #fff,
     1px -1px 0 #fff,
@@ -104,16 +98,23 @@ html, body {
 }
 
 #svgholder {
-    
-    height: 65%;
+  
+
     min-height: 100px;
-    width:90%;
-    /*overflow: scroll;*/
-    overflow-x: auto;
+  
+
     margin-left:auto;
     margin-right:auto;
     margin-bottom: 10px;
     margin-top:10px;
+}
+
+svg {
+          border: 2px;      
+    border-radius: 8px; 
+    border-color: #BABABA;  
+    border-style: solid;
+ 
 }
 
 .foreignobj div {
@@ -171,10 +172,7 @@ html, body {
 }
 
 
- .tooltip_child_text {
-    width:100%;
-  
-}
+
 
 .tooltip_img {
     border-radius: 50%;
@@ -188,24 +186,6 @@ html, body {
 }
 
 
-/*div.tooltip {		
-    text-align: left;						
-    padding: 2px;				
-    font: 12px sans-serif;		
-    background: white;	
-    border: 2px;		
-    border-radius: 8px;	
-    border-color: #BABABA;		
-    border-style: solid;
-    min-height:250px;	
-    margin-left:auto;
-    margin-right:auto;
-    margin-bottom: 10px;
-    margin-top:10px;
-    width:90%;
-   
-    visibility: hidden;
-}*/
 
 select {
     visibility: hidden;
@@ -227,5 +207,6 @@ select {
     width: 200px;
     margin:10px;
     color: #BCBCBC;
+    visibility: hidden;
 
 }
