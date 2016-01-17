@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Yammersphere</title>
+    <title>Interactive organisational chart</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
   </head>
@@ -14,6 +14,7 @@
         <option></option>
       </select>
     </div>
+
     <div id="svgholder" class="maindiv">
       <div id="tips">
         <p><strong>Tips:</strong></p>
@@ -21,16 +22,17 @@
         <p>Use the search function at the top to search by either name or job title</p>
         <p>Hover over names to load further details in the bottom panel</p>
       </div>
-      
     </div>
+
     <div class="tooltip maindiv"></div>
+
     <div class="settings">
 
       <label for="MIN_HEIGHT">Min height</label>
-      <input type="range" id="MIN_HEIGHT" max="1000" min="100" value="400" />
+      <input type="range" id="MIN_HEIGHT" max="1000" min="0" value="400" />
 
       <label for="NODE_HEIGHT">Node height</label>
-      <input type="range" id="NODE_HEIGHT" min="0" max="100" value="35" />
+      <input type="range" id="NODE_HEIGHT" min="2" max="100" value="35" />
 
       <label for="NODE_SPACING">Node spacing</label>
       <input type="range" id="NODE_SPACING" min="0" max="30" value="10"/>
@@ -46,7 +48,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.4/handlebars.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
-    <script src="js/main_output.js"></script>
+    <script src="js/main.js"></script>
   </body>
 
   <script id="entry-template" type="text/x-handlebars-template">

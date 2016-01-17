@@ -161,17 +161,10 @@ svg {
 }
 
 
-
-
-
-
-
 .tooltip_child_text {
     vertical-align: middle;
     padding-left: 4px;
 }
-
-
 
 
 .tooltip_img {
@@ -185,8 +178,6 @@ svg {
     margin: 5px;
 }
 
-
-
 select {
     visibility: hidden;
 }
@@ -197,8 +188,6 @@ select {
     width: 60%;
     min-width: 1000px;
 }
-
-
 
 
 #tips {

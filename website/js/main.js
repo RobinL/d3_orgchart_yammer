@@ -1,33 +1,3 @@
-function collapse(d) {
-    if (d.children) {
-        d._children = d.children;
-        d._children.forEach(collapse);
-        d.children = null; //_children is potential childern, children is displayed children 
-    }
-}
-
-function expand(d){   
-    var children = (d.children)?d.children:d._children;
-    if (d._children) {        
-        d.children = d._children;
-        d._children = null;       
-    }
-    if(children)
-      children.forEach(expand);
-}
-
-
-
-function endall(transition, callback) { 
-
-    if (transition.size() === 0) { callback() }
-    var n = 0; 
-    transition 
-        .each(function() { ++n; }) 
-        .each("end", function() { if (!--n) callback.apply(this, arguments); }); 
-  } 
-
-
 // Main container for the organisation chart - writes the org chart into the dom element specified by the jquery selection
 function organisation_chart(all_data, selection_string) {
 
@@ -35,10 +5,8 @@ function organisation_chart(all_data, selection_string) {
     var NODE_HEIGHT = 35
     var NODE_SPACING = 10
     var FONT_SIZE = 10
+    var LINK_WIDTH = 220
 
-    
-
-    // $("#svgholder")
     var all_data = all_data
     var duration = 750
 
@@ -58,8 +26,6 @@ function organisation_chart(all_data, selection_string) {
     var width = total_width - margin.right - margin.left;
     var height = total_height - margin.top - margin.bottom;
 
-    var LINK_WIDTH = 220
-
     var tree = d3.layout.tree()
         .size([height, width]);
 
@@ -74,13 +40,12 @@ function organisation_chart(all_data, selection_string) {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+    //root stores the currently-displayed org chart
     var root = all_data.tree;
     root.x0 = height / 2;
     root.y0 = 0;
 
-    //root.children[0].children.forEach(collapse); //On first run collapse all but directors
-
-    root.children.forEach(collapse); //On first run collapse all but directors
+    root.children.forEach(collapse); //On first run collapse all but first two levels
 
     create_profile_card(root)
 
@@ -121,6 +86,7 @@ function organisation_chart(all_data, selection_string) {
     }
 
 
+    //For changing the currently-displayed orgchart (and the underlying data) to begin with a specific user
     function change_root(userid) {
 
         root = all_data.tree;
@@ -135,7 +101,7 @@ function organisation_chart(all_data, selection_string) {
     }
 
 
-
+    //To determine the height of the SVG, we want to know the max number of nodes are displayed in parallel (stacked on top of one another)
     function get_max_height() {
 
         var count_nodes = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  //count of nodes at each level
@@ -163,7 +129,6 @@ function organisation_chart(all_data, selection_string) {
         recurse(root,0)
 
         var nodes_contribution  = Math.max.apply(Math, count_nodes)*(NODE_HEIGHT + NODE_SPACING)
-        // var gap_contribution = Math.max.apply(Math, gaps)*55
         var gap_contribution = NODE_HEIGHT*gaps_2
         var levels_contribution = (max_level-1) * (NODE_SPACING + NODE_SPACING)
 
@@ -173,8 +138,10 @@ function organisation_chart(all_data, selection_string) {
     }
 
 
+    //Main redraw for chart
     function redraw(source) {
 
+        // Get values of all constants
         MIN_HEIGHT = parseFloat($("#MIN_HEIGHT").val())
         NODE_HEIGHT = parseFloat($("#NODE_HEIGHT").val())
         NODE_SPACING = parseFloat($("#NODE_SPACING").val())
@@ -182,15 +149,11 @@ function organisation_chart(all_data, selection_string) {
         FONT_SIZE = parseFloat($("#FONT_SIZE").val())
 
         //Does the height need to be updated?
-
         var new_height =  get_max_height(root)
 
         // If getting bigger, immediately make svg bigger 
-        var new_width = (find_depth()+1)*LINK_WIDTH + margin.left + margin.right
+        var new_width = (find_depth())*LINK_WIDTH
         
-
-        console.log(new_height + " " + new_width)
-
         // Transition to new height and width
         d3.select(selection_string)
             .select("svg")
@@ -243,9 +206,9 @@ function organisation_chart(all_data, selection_string) {
             .append("foreignObject")
         
             .attr("width", function(d) {
-                return 500
+                return LINK_WIDTH
             })
-            .attr("height", 400)
+            .attr("height", NODE_HEIGHT)
 
             .attr("y", function(d) {
                 return NODE_HEIGHT 
@@ -327,10 +290,6 @@ function organisation_chart(all_data, selection_string) {
         nodeUpdate.select("text")
             .style("fill-opacity", 1);
 
- 
-
-
-
         // Transition exiting nodes to the parent's new position.
         var nodeExit = node.exit().transition()
             .duration(duration)
@@ -397,6 +356,7 @@ function organisation_chart(all_data, selection_string) {
     }
 
 
+    //Used to find a user by a specific id in the tree
     function tree_search(id) {
 
         root = all_data.tree
@@ -525,7 +485,7 @@ function organisation_chart(all_data, selection_string) {
 
         recurse_depth(root,0)
 
-        return max_depth
+        return max_depth +1
 
     }
 
@@ -549,14 +509,9 @@ function organisation_chart(all_data, selection_string) {
 
         });
 
- 
     }
 
-
-
-
     return {
-        // resize_chart: resize_chart,
         redraw: redraw,
         tree_search: tree_search
     }
@@ -566,25 +521,15 @@ function organisation_chart(all_data, selection_string) {
 
 d3.json("data/orgchart_data.json", function(error, data) {
 
-
-    $(".maindiv").css("visibility", "visible" )
-    $("#import_csvs").css("display", "none" )
-    $("#tips").css("visibility", "visible" )
-
-
     var chart = organisation_chart(data, "#svgholder")
-
-
 
     // Create search box
     $("#search_box").select2({
-
         allowClear: true,
         placeholder: "Type here to search or click on nodes to expand/contract organisation chart",
         data: data.select_box,
         width: "100%"
     });
-
 
 
     $('#search_box').on("change", function(d) {
@@ -597,6 +542,8 @@ d3.json("data/orgchart_data.json", function(error, data) {
 });
 
 
+
+// Short utility functions go after here
 function shorten_text(my_string) {
     var max_len = 65
     if (my_string.length > max_len) {
@@ -605,20 +552,38 @@ function shorten_text(my_string) {
     return my_string
 }
 
-
-
-
-
-
-// The following code handles the file upload - can be deleted once hosted somewhere secure
-
-function browserSupportFileUpload() {
-    var isCompatible = false;
-    if (window.File && window.FileReader && window.FileList && window.Blob) {
-        isCompatible = true;
+function collapse(d) {
+    if (d.children) {
+        d._children = d.children;
+        d._children.forEach(collapse);
+        d.children = null; //_children is potential childern, children is displayed children 
     }
-    return isCompatible;
 }
+
+function expand(d){   
+    var children = (d.children)?d.children:d._children;
+    if (d._children) {        
+        d.children = d._children;
+        d._children = null;       
+    }
+    if(children)
+      children.forEach(expand);
+}
+
+
+
+
+
+
+// The following code could be used if you wanted the user to be able to upload a json file containing the heirarchy information
+
+// function browserSupportFileUpload() {
+//     var isCompatible = false;
+//     if (window.File && window.FileReader && window.FileList && window.Blob) {
+//         isCompatible = true;
+//     }
+//     return isCompatible;
+// }
 
 // d3.select("#txtFileUpload").on("change", upload)
 
