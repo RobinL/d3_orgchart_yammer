@@ -95,7 +95,6 @@ function organisation_chart(all_data, selection_string) {
             root = get_root_from_id(userid,root)
         }
 
-        expand(root)
 
     }
 
@@ -510,6 +509,16 @@ function organisation_chart(all_data, selection_string) {
         $('#reset_orgchart').click(function(e) {
             change_root(all_data.tree.id)
             root.children.forEach(collapse);
+            redraw(root)
+        });
+
+        $('#expand_allnodes').click(function(e) {
+            expand(root)
+            redraw(root)
+        });
+
+         $('#collapse_allnodes').click(function(e) {
+            collapse(root)
             redraw(root)
         });
     }
