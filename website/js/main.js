@@ -6,6 +6,18 @@ function collapse(d) {
     }
 }
 
+function expand(d){   
+    var children = (d.children)?d.children:d._children;
+    if (d._children) {        
+        d.children = d._children;
+        d._children = null;       
+    }
+    if(children)
+      children.forEach(expand);
+}
+
+
+
 function endall(transition, callback) { 
 
     if (transition.size() === 0) { callback() }
@@ -19,16 +31,20 @@ function endall(transition, callback) {
 // Main container for the organisation chart - writes the org chart into the dom element specified by the jquery selection
 function organisation_chart(all_data, selection_string) {
 
+    var MIN_HEIGHT = 400    
+    var NODE_HEIGHT = 35
+    var NODE_SPACING = 10
+    var FONT_SIZE = 10
+
+    
+
     // $("#svgholder")
     var all_data = all_data
     var duration = 750
 
     var selection_string = selection_string
 
-    var total_height = $(selection_string).height(); //Take height and width from size of svg container
-
-    total_height = Math.max(total_height, 600)-30
-
+    var total_height = 400; //Take height and width from size of svg container
 
     var total_width = $(selection_string).width();
 
@@ -36,13 +52,13 @@ function organisation_chart(all_data, selection_string) {
         top: 20,
         right: 20,
         bottom: 20,
-        left: 20
+        left: 50
     };
 
     var width = total_width - margin.right - margin.left;
     var height = total_height - margin.top - margin.bottom;
 
-    var link_width = 220
+    var LINK_WIDTH = 220
 
     var tree = d3.layout.tree()
         .size([height, width]);
@@ -52,7 +68,7 @@ function organisation_chart(all_data, selection_string) {
             return [d.y, d.x];
         });
 
-    var svg = d3.select("#svgholder").append("svg")
+    var svg = d3.select(selection_string).append("svg")
         .attr("width", total_width)
         .attr("height", total_height)
         .append("g")
@@ -66,59 +82,127 @@ function organisation_chart(all_data, selection_string) {
 
     root.children.forEach(collapse); //On first run collapse all but directors
 
-
-
     create_profile_card(root)
 
     redraw(root)
 
-    function redraw_from_scratch() {
+    $("#MIN_HEIGHT").on("change", redraw)
+    $("#NODE_HEIGHT").on("change", redraw)
+    $("#NODE_SPACING").on("change", redraw)
+    $("#LINK_WIDTH").on("change", redraw)
+    $("#FONT_SIZE").on("change", redraw)
 
-        total_height = $(selection_string).height();
+    //For drawing tree starting from a particular node
+    function get_root_from_id(userid, tree) {
 
-        total_height = Math.max(total_height, 600)-30
-
-        total_width = $(selection_string).width();
-
-        width = total_width - margin.right - margin.left;
-        height = total_height - margin.top - margin.bottom;
-
-        d3.select(selection_string).select("svg")
-            .attr("width", total_width)
-            .attr("height", total_height)
+        var found = tree
+        var userid = userid
 
 
-        tree = d3.layout.tree()
-            .size([height, width]);
+        function recurse(node) {
+            if (node["id"] == userid) {
+                found = node
+            } else {
+                if (node.children) {
+                    for (var i = 0; i < node["children"].length; i++) {
+                        recurse(node["children"][i])
+                    }
+                }
+            };
+        }
+
+        if (tree["id"] == userid) {
+            found = tree
+        } else {
+            recurse(tree)
+        }
+
+        return found
+    }
+
+
+    function change_root(userid) {
 
         root = all_data.tree;
 
+        if (userid != "") {
+            root = get_root_from_id(userid,root)
+        }
+
+        expand(root)
         redraw(root)
+
+    }
+
+
+
+    function get_max_height() {
+
+        var count_nodes = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  //count of nodes at each level
+        var gaps =  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] 
+        var gaps_2 = 0
+        var max_level = 0
+
+        function recurse(node,level) {
+            var level = level + 1
+            max_level = Math.max(level, max_level)
+
+            if (node["children"]) {
+                count_nodes[level] += node["children"].length
+                gaps[level] += 1
+                gaps_2 +=1
+
+                for (var i = 0; i < node["children"].length; i++) {
+                    recurse(node["children"][i],level)
+                };
+
+            }
+
+        }
+
+        recurse(root,0)
+
+        var nodes_contribution  = Math.max.apply(Math, count_nodes)*(NODE_HEIGHT + NODE_SPACING)
+        // var gap_contribution = Math.max.apply(Math, gaps)*55
+        var gap_contribution = NODE_HEIGHT*gaps_2
+        var levels_contribution = (max_level-1) * (NODE_SPACING + NODE_SPACING)
+
+
+        return  Math.max(nodes_contribution + gap_contribution + levels_contribution, MIN_HEIGHT)
+
     }
 
 
     function redraw(source) {
 
+        MIN_HEIGHT = parseFloat($("#MIN_HEIGHT").val())
+        NODE_HEIGHT = parseFloat($("#NODE_HEIGHT").val())
+        NODE_SPACING = parseFloat($("#NODE_SPACING").val())
+        LINK_WIDTH = parseFloat($("#LINK_WIDTH").val())
+        FONT_SIZE = parseFloat($("#FONT_SIZE").val())
+
+        //Does the height need to be updated?
+
+        var new_height =  get_max_height(root)
+
         // If getting bigger, immediately make svg bigger 
-        var current_width = d3.select(selection_string).select("svg").attr("width")
-        var new_width = (find_depth()+1)*link_width
+        var new_width = (find_depth()+1)*LINK_WIDTH + margin.left + margin.right
+        
 
-        if (Math.max(current_width, new_width) >  $("#svgholder").width()){
-            var scroll_needed = true
-        }
+        console.log(new_height + " " + new_width)
 
-        var scrollamount = new_width - current_width
-        if (scrollamount > 0) {
-            var scroll_left = "+=" + scrollamount
-        } else {
-            var scroll_left = "-=" + (scrollamount * -1)
+        // Transition to new height and width
+        d3.select(selection_string)
+            .select("svg")
+            .transition()
+            .duration(duration)
+            .attr("height", new_height+margin.top+margin.bottom)
+            .attr("width", new_width+margin.left+margin.right)
+            .transition()
 
-        }
+        tree = d3.layout.tree()
+             .size([new_height, new_width]);
 
-        if (new_width > current_width) {
-            d3.select(selection_string).select("svg")
-                .attr("width", new_width)
-        }
 
         // Compute the new tree layout.
         var nodes = tree.nodes(root).reverse(),
@@ -126,7 +210,7 @@ function organisation_chart(all_data, selection_string) {
 
         // Normalize for fixed-depth.
         nodes.forEach(function(d) {
-            d.y = d.depth * link_width;
+            d.y = d.depth * LINK_WIDTH;
         });
 
         // Update the nodes…
@@ -157,20 +241,44 @@ function organisation_chart(all_data, selection_string) {
 
         nodeEnter
             .append("foreignObject")
-            .attr("height", function(d) {
-                return '44px'
-            })
+        
             .attr("width", function(d) {
-                return link_width
+                return 500
             })
+            .attr("height", 400)
 
-            .attr("y", "-20")
-            .attr("x", "-10")
-            .append("xhtml:div")
-            .attr("dy", ".75em")
-            .attr("x", function(d) {
-                return d.children || d._children ? -10 : 10;
+            .attr("y", function(d) {
+                return NODE_HEIGHT 
             })
+            .attr("x", "-100")
+            .attr("class", "foo")
+            .append("xhtml:div")
+            
+            .attr("dy", "0")
+            .attr("x", function(d) {
+                return 10
+            })
+     
+
+        // Transition nodes to their new position.
+        var nodeUpdate = node.transition()
+            .duration(duration)
+            .attr("transform", function(d) {
+                return "translate(" + d.y + "," + d.x + ")";
+            });
+
+
+       
+        node
+            .select(".foo")
+            .attr("y", function(d) {
+                    return -(NODE_HEIGHT/2)
+            })
+            .attr("x", function(d) {
+                return -(NODE_HEIGHT/2)
+            })
+         
+           
             .html(function(d) {
                 var source = d3.select("#foreignobject-template").html();
                 var template = Handlebars.compile(source);
@@ -178,13 +286,19 @@ function organisation_chart(all_data, selection_string) {
                 var template_data = {}
                 template_data.full_name = d.full_name
                 template_data.job_title = d.job_title
-                template_data.mugshot_url_template = d.mugshot_url_template.replace("200","100").replace("200","100") 
-                template_data.imgwidth = '35px'
-                template_data.imgheight =  '35px'
-                template_data.totalheight = '44px'
-                template_data.textwidth = (link_width - 40) + "px"
+                template_data.mugshot_url_template = d.mugshot_url_template.replace("200","200").replace("200","200") 
+                template_data.imgwidth = NODE_HEIGHT +'px'
+                template_data.imgheight =  NODE_HEIGHT +'px'
+                template_data.totalheight = NODE_HEIGHT + 'px'
+                template_data.textwidth = (LINK_WIDTH - (NODE_HEIGHT)-20) + "px"
                 template_data.bordercolour = color_scale(d.messages_in_last_180_days)
                 template_data.user_id = d.id
+                template_data.font_size = FONT_SIZE
+                if (NODE_HEIGHT > 25) {
+                template_data.include_job_title = true
+                } else {
+                    template_data.include_job_title = false
+                }
 
 
                 var html = template(template_data);
@@ -193,21 +307,6 @@ function organisation_chart(all_data, selection_string) {
             .on("mouseover", function(d) {
                 create_profile_card(d)
 
-            })
-
-        // Transition nodes to their new position.
-        var nodeUpdate = node.transition()
-            .duration(duration)
-            .attr("transform", function(d) {
-                return "translate(" + d.y + "," + d.x + ")";
-            })
-             .call(endall, function(d) {
-                if (new_width > current_width & scroll_needed) {
-                    $('#svgholder').animate({
-                        scrollLeft: scroll_left
-                    }, duration)
-           
-                }
             })
             
 
@@ -227,6 +326,10 @@ function organisation_chart(all_data, selection_string) {
 
         nodeUpdate.select("text")
             .style("fill-opacity", 1);
+
+ 
+
+
 
         // Transition exiting nodes to the parent's new position.
         var nodeExit = node.exit().transition()
@@ -282,19 +385,8 @@ function organisation_chart(all_data, selection_string) {
                     target: o
                 });
             })
-             .call(endall, function(d) {
-                if (new_width <= current_width & scroll_needed) {
-                    d3.select(selection_string).select("svg")
-                        .attr("width", new_width)
-                }
-            })
             .remove()
-            .call(endall, function(d) {
-                         d3.select(selection_string).select("svg")
-                         .transition()
-                         .duration(duration)
-                        .attr("width", new_width)
-            });
+
 
         // Stash the old positions for transition.
         nodes.forEach(function(d) {
@@ -306,6 +398,8 @@ function organisation_chart(all_data, selection_string) {
 
 
     function tree_search(id) {
+
+        root = all_data.tree
 
         function searchpath_false_all() {
 
@@ -435,8 +529,34 @@ function organisation_chart(all_data, selection_string) {
 
     }
 
+    function create_profile_card(d) {
+        var div = d3.select(".tooltip")
+        div.transition()
+            .duration(200)
+            .style("opacity", .9);
+        div.html(function(d2) {
+            var source = d3.select("#entry-template").html();
+            var template = Handlebars.compile(source);
+
+            var html = template(d);
+            return html
+        })
+
+        $('#orgchart_starting_here').on("click", function(d) {
+
+            userid = $(this).attr("data_user_id")
+            change_root(userid)
+
+        });
+
+ 
+    }
+
+
+
+
     return {
-        redraw_from_scratch: redraw_from_scratch,
+        // resize_chart: resize_chart,
         redraw: redraw,
         tree_search: tree_search
     }
@@ -446,7 +566,14 @@ function organisation_chart(all_data, selection_string) {
 
 d3.json("data/orgchart_data.json", function(error, data) {
 
+
+    $(".maindiv").css("visibility", "visible" )
+    $("#import_csvs").css("display", "none" )
+    $("#tips").css("visibility", "visible" )
+
+
     var chart = organisation_chart(data, "#svgholder")
+
 
 
     // Create search box
@@ -465,12 +592,6 @@ d3.json("data/orgchart_data.json", function(error, data) {
         chart.tree_search(search_id)
     });
 
-    $(window).resize(function() {
-
-        chart.redraw_from_scratch()
-
-    })
-
 
 
 });
@@ -485,17 +606,64 @@ function shorten_text(my_string) {
 }
 
 
-function create_profile_card(d) {
-    var div = d3.select(".tooltip")
-    div.transition()
-        .duration(200)
-        .style("opacity", .9);
-    div.html(function(d2) {
-        var source = d3.select("#entry-template").html();
-        var template = Handlebars.compile(source);
 
-        var html = template(d);
-        return html
-    })
+
+
+
+// The following code handles the file upload - can be deleted once hosted somewhere secure
+
+function browserSupportFileUpload() {
+    var isCompatible = false;
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+        isCompatible = true;
+    }
+    return isCompatible;
 }
 
+// d3.select("#txtFileUpload").on("change", upload)
+
+// function upload() {
+
+//     if (!browserSupportFileUpload()) {
+//         alert('The File APIs are not fully supported in this browser!');
+//     } else {
+
+//         var data = null;
+//         var file = this.files[0];
+//         var reader = new FileReader();
+//         reader.readAsText(file);
+
+//         reader.onload = function(event) {
+//             var jsonData = event.target.result;
+//             data = JSON.parse(jsonData);
+
+//             $(".maindiv").css("visibility", "visible" )
+//             $("#import_csvs").css("display", "none" )
+//             $("#tips").css("visibility", "visible" )
+
+
+//             var chart = organisation_chart(data, "#svgholder")
+
+
+//             // Create search box
+//             $("#search_box").select2({
+
+//                 allowClear: true,
+//                 placeholder: "Type here to search or click on nodes to expand/contract organisation chart",
+//                 data: data.select_box,
+//                 width: "100%"
+//             });
+
+
+
+//             $('#search_box').on("change", function(d) {
+//                 search_id = $("#search_box").val()
+//                 chart.tree_search(search_id)
+//             });
+//         };
+//         reader.onerror = function() {
+//             alert('Unable to read ' + file.fileName);
+//         };
+//     }
+
+// }
