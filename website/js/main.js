@@ -493,6 +493,16 @@ function organisation_chart(all_data, selection_string) {
     function create_profile_card(d) {
         var div = d3.select(".tooltip")
 
+        //Add computed statistics to data
+        d.num_children = get_child_count(d)
+        d.average_statistic_1 = get_mean_from_tree(d, "statistic_1")
+
+        if (!(isNaN(d3.format(".2f")(d.average_statistic_1)))) {
+            d.average_statistic_1 = d3.format(",.2f")(d.average_statistic_1)
+        }
+
+        d.sum_statistic_2 = get_sum_from_tree(d, "statistic_2")
+
         div.html(function(d2) {
             var source = d3.select("#entry-template").html();
             var template = Handlebars.compile(source);
@@ -553,6 +563,78 @@ d3.json("data/orgchart_data.json", function(error, data) {
 
 });
 
+//Statistical functions that work on d3 heirarchy
+
+function get_child_count(tree) {
+
+
+    var stats = get_list_of_stats(tree, "id")
+
+    if (stats.length == 0) {
+        return "No subordinates"
+    }
+
+    return stats.length
+
+}
+
+function get_mean_from_tree(tree,key) {
+
+    var stats = get_list_of_stats(tree, key)
+
+    if (stats.length == 0) {
+        return "No subordinates"
+    }
+
+    sum = _.reduce(stats, function(memo, num) {
+        return memo+num
+    })
+
+    return sum/stats.length
+
+}
+
+function get_sum_from_tree(tree, key) {
+
+    var stats = get_list_of_stats(tree, key)
+
+    if (stats.length == 0) {
+        return "No subordinates"
+    }
+
+    sum = _.reduce(stats, function(memo, num) {
+        return memo+num
+    })
+
+    return sum
+
+}
+
+
+//Gets a list of all of the statistics of children of that node (but not the node itself)
+function get_list_of_stats(tree, key) {
+
+    var list_of_stats = []
+    var key = key
+
+    function add_to_list(tree) {
+        _.each(tree._children, function(child) {
+            list_of_stats.push(child[key])
+            add_to_list(child)
+        })
+
+        _.each(tree.children, function(child) {
+            list_of_stats.push(child[key])
+            add_to_list(child)
+        })
+
+    }
+
+    add_to_list(tree)
+
+    return list_of_stats
+
+}
 
 
 // Short utility functions go after here

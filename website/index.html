@@ -46,6 +46,7 @@
     
     <script src="https://d3js.org/d3.v3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.4/handlebars.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
     <script src="js/main.js"></script>
@@ -54,7 +55,7 @@
 <script id="entry-template" type="text/x-handlebars-template">
 <table class="">
   <tr>
-    <td class="" rowspan="5"><img src="{{mugshot_url_template}}" class="tooltip_img"/></td>
+    <td class="" rowspan="8"><img src="{{mugshot_url_template}}" class="tooltip_img"/></td>
     <td class=""><strong>Name: </strong>{{full_name}}</td>
     <td class=""><strong>Job title: </strong>{{job_title}}</td>
   </tr>
@@ -88,6 +89,20 @@
 
     </td>
   </tr>
+
+  <tr  >
+  <td colspan="2">Number of staff in team:  {{num_children}}</td>
+  </tr>
+
+  <tr  >
+
+  <td colspan="2">Average of statistic_1 in team:  {{average_statistic_1}}</td>
+  </tr>
+
+  <td colspan="2">Sum of statistic_2 in team:  {{sum_statistic_2}}</td>
+  </tr>
+
+
 
 </table>
 </script>
