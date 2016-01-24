@@ -24,8 +24,10 @@
       </div>
     </div>
 
-    <div class="tooltip maindiv"></div>
+    <div class="profile_card maindiv"></div>
 
+    <div class="stats_card maindiv"></div>
+    
     <div class="settings">
 
       <label for="MIN_HEIGHT">Min height</label>
@@ -52,10 +54,34 @@
     <script src="js/main.js"></script>
   </body>
 
-<script id="entry-template" type="text/x-handlebars-template">
+
+
+
+<script id="stats-template" type="text/x-handlebars-template">
+<table class="tg">
+  <tr>
+    <th class="tg-031e">Statistic</th>
+    <th class="tg-031e">Value</th>
+  </tr>
+  <tr>
+    <td class="tg-031e">Count of subordinates</td>
+    <td class="tg-031e">{{num_children}}</td>
+  </tr>
+  <tr>
+    <td class="tg-031e">Average of statistic_1</td>
+    <td class="tg-031e">{{average_statistic_1}}</td>
+  </tr>
+  <tr>
+    <td class="tg-031e">Sum of statistic_2</td>
+    <td class="tg-031e">{{sum_statistic_2}}</td>
+  </tr>
+</table>
+</script>
+
+<script id="profile-template" type="text/x-handlebars-template">
 <table class="">
   <tr>
-    <td class="" rowspan="8"><img src="{{mugshot_url_template}}" class="tooltip_img"/></td>
+    <td class="" rowspan="5"><img src="{{mugshot_url_template}}" class="profile_card_img"/></td>
     <td class=""><strong>Name: </strong>{{full_name}}</td>
     <td class=""><strong>Job title: </strong>{{job_title}}</td>
   </tr>
@@ -90,17 +116,7 @@
     </td>
   </tr>
 
-  <tr  >
-  <td colspan="2">Number of staff in team:  {{num_children}}</td>
-  </tr>
 
-  <tr  >
-
-  <td colspan="2">Average of statistic_1 in team:  {{average_statistic_1}}</td>
-  </tr>
-
-  <td colspan="2">Sum of statistic_2 in team:  {{sum_statistic_2}}</td>
-  </tr>
 
 
 

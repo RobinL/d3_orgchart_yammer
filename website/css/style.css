@@ -74,7 +74,6 @@ table {
 }
 
 
-
 .foreignobject_child_text {
     vertical-align: middle;
     padding-left: 4px;
@@ -116,6 +115,13 @@ table {
     border-radius: 50%;
 }
 
+.stats_card td, .stats_card tr, .stats_card th{
+
+    border: 1px solid #BABABA;
+    padding:4px;
+
+}
+
 #svgholder {
   
 
@@ -139,12 +145,7 @@ svg {
     background-color: rgba(255,255,255,0)
 }
 
-
-
-
-
-
-.tooltip_img {
+.profile_card_img {
     border-radius: 50%;
     height:120px;
     width:120px;

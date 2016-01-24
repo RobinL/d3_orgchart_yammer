@@ -48,6 +48,7 @@ function organisation_chart(all_data, selection_string) {
     root.children.forEach(collapse); //On first run collapse all but first two levels
 
     create_profile_card(root)
+    create_stats_card(root)
 
     redraw(root)
 
@@ -270,6 +271,7 @@ function organisation_chart(all_data, selection_string) {
             })
             .on("mouseover", function(d) {
                 create_profile_card(d)
+                create_stats_card(d)
 
             })
             
@@ -491,20 +493,11 @@ function organisation_chart(all_data, selection_string) {
     }
 
     function create_profile_card(d) {
-        var div = d3.select(".tooltip")
+        var div = d3.select(".profile_card")
 
-        //Add computed statistics to data
-        d.num_children = get_child_count(d)
-        d.average_statistic_1 = get_mean_from_tree(d, "statistic_1")
-
-        if (!(isNaN(d3.format(".2f")(d.average_statistic_1)))) {
-            d.average_statistic_1 = d3.format(",.2f")(d.average_statistic_1)
-        }
-
-        d.sum_statistic_2 = get_sum_from_tree(d, "statistic_2")
-
+        
         div.html(function(d2) {
-            var source = d3.select("#entry-template").html();
+            var source = d3.select("#profile-template").html();
             var template = Handlebars.compile(source);
             var html = template(d);
             return html
@@ -531,6 +524,29 @@ function organisation_chart(all_data, selection_string) {
             collapse(root)
             redraw(root)
         });
+    }
+
+    function create_stats_card(d) {
+         var div = d3.select(".stats_card")
+
+         //Add computed statistics to data
+        d.num_children = get_child_count(d)
+        d.average_statistic_1 = get_mean_from_tree(d, "statistic_1")
+
+        if (!(isNaN(d3.format(".2f")(d.average_statistic_1)))) {
+            d.average_statistic_1 = d3.format(",.2f")(d.average_statistic_1)
+        }
+
+        d.sum_statistic_2 = get_sum_from_tree(d, "statistic_2")
+
+        div.html(function(d2) {
+            var source = d3.select("#stats-template").html();
+            var template = Handlebars.compile(source);
+            var html = template(d);
+            return html
+        })
+
+
     }
 
     return {
