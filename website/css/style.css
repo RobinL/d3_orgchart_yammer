@@ -177,3 +177,10 @@ select {
 
 
 }
+
+
+.error_report {
+    font: 16px sans-serif;
+    color: #F90202
+
+}

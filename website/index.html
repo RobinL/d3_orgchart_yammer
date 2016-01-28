@@ -127,21 +127,33 @@
 
 
  
-  <script id="foreignobject-template" type="text/x-handlebars-template">
-  <div class="foreignobject_parent">
-    <div class="foreignobject_child_img" >
-      <img src="{{mugshot_url_template}}" class="foreignobject_img" style="width:{{imgwidth}}; height:{{imgheight}}; border: 2px solid {{bordercolour}}" data-id = "{{user_id}}"/>
-    </div>
-    <div class="foreignobject_child_text" style="width:{{textwidth}};" >
-      <div style="height:{{totalheight}}; overflow:hidden; display:table-cell; vertical-align: middle; font-size:{{font_size}}px" ><strong>
-      
-      {{full_name}}</strong>
-      {{#if include_job_title}}
-        <br/>({{job_title}})
-        {{/if}}
-      </div>
+<script id="foreignobject-template" type="text/x-handlebars-template">
+<div class="foreignobject_parent">
+  <div class="foreignobject_child_img" >
+    <img src="{{mugshot_url_template}}" class="foreignobject_img" style="width:{{imgwidth}}; height:{{imgheight}}; border: 2px solid {{bordercolour}}" data-id = "{{user_id}}"/>
+  </div>
+  <div class="foreignobject_child_text" style="width:{{textwidth}};" >
+    <div style="height:{{totalheight}}; overflow:hidden; display:table-cell; vertical-align: middle; font-size:{{font_size}}px" ><strong>
+    
+    {{full_name}}</strong>
+    {{#if include_job_title}}
+      <br/>({{job_title}})
+      {{/if}}
     </div>
   </div>
-  </script>
+</div>
+</script>
+
+<script id="errormessage-template" type="text/x-handlebars-template">
+<div class="error_report maindiv">
+<p> Unfortunately there were problems in converting the csv file into an orgchart for the following reasons </p>
+<ul class="error_list">
+  {{#each errors}}
+    <li>{{this}}</li>
+  {{/each}}
+</ul>
+</div>
+
+</script>
 
 </html>

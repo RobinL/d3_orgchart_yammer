@@ -555,15 +555,11 @@ function organisation_chart(all_data, selection_string) {
     }
 }
 
-// d3.csv("data/random_data_flat_file.csv", function(data) {
-//   json_data = csv_to_json(data)
+d3.csv("data/random_data_flat_file.csv", function(csv_data) {
 
   
-// });
-
-d3.json("data/orgchart_data.json", function(error, data) {
-
-    var chart = organisation_chart(data, "#svgholder")
+  var data = csv_to_json(csv_data)
+  var chart = organisation_chart(data, "#svgholder")
 
     // Create search box
     $("#search_box").select2({
@@ -579,9 +575,39 @@ d3.json("data/orgchart_data.json", function(error, data) {
         chart.tree_search(search_id)
     });
 
-
-
+  
 });
+
+// Test
+// d3.csv("tests/6_nodes_two_ceos_duplicated_records.csv", function(csv_data) {
+  
+//   var data = csv_to_json(csv_data)
+  
+// });
+
+// To be used if data is already in json format
+
+// d3.json("data/orgchart_data.json", function(error, data) {
+
+//     var chart = organisation_chart(data, "#svgholder")
+
+//     // Create search box
+//     $("#search_box").select2({
+//         allowClear: true,
+//         placeholder: "Type here to search or click on nodes to expand/contract organisation chart",
+//         data: data.select_box,
+//         width: "100%"
+//     });
+
+
+//     $('#search_box').on("change", function(d) {
+//         search_id = $("#search_box").val()
+//         chart.tree_search(search_id)
+//     });
+
+
+// });
+
 
 //Statistical functions that work on d3 heirarchy
 
@@ -602,6 +628,10 @@ function get_mean_from_tree(tree,key) {
 
     var stats = get_list_of_stats(tree, key)
 
+    stats = _.map(stats, function(s) {
+        return parseFloat(s)
+    })
+
     if (stats.length == 0) {
         return "No subordinates"
     }
@@ -617,6 +647,10 @@ function get_mean_from_tree(tree,key) {
 function get_sum_from_tree(tree, key) {
 
     var stats = get_list_of_stats(tree, key)
+
+    stats = _.map(stats, function(s) {
+        return parseFloat(s)
+    })
 
     if (stats.length == 0) {
         return "No subordinates"

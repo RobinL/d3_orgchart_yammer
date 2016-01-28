@@ -2,7 +2,7 @@
 
 This repo contains all the code you need to create an interactive, searchable organisational chart.
 
-It contains Python code that will automatically generate the required data from the Yammer API.  
+It was built to work with data from the Yammer API, but has since been adapted to work with data from any source, provided in csv format.
 
 Works in modern browsers.
 
@@ -32,6 +32,11 @@ You can find a demo [here](http://robinl.github.io/d3_orgchart_yammer/website/ "
 
 cd to the 'website' directory and type `python -m SimpleHTTPServer` and navigate to `http://127.0.0.1:8000/` in your web browser.
 
-This will use the faked data at `/website/data/orgchart_data.json`
+This will use the faked data at `/website/data/random_data_flat_file.csv`
+
+If you want to use your own data, you just need to provide a csv in the same format as this file.  
+
+For a very simple example, see `/website/tests/6_nodes_no_errors.csv`
 
 If you want to create some new faked data, use `Data faker (for testing purposes).ipynb`
+
