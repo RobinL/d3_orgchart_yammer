@@ -2,30 +2,28 @@ function csv_to_json(csv_data) {
 
 
 	var select_box_data =  get_select_box_data(csv_data)
-	
+
 	//get_tree_data modifies csv_data
 	csv_data_copy = Object.create(csv_data)
 	var tree = get_tree_data(csv_data_copy)
-	
+
 	return {select_box: select_box_data, tree: tree}
-	
+
 }
 
 function get_select_box_data(csv_data) {
-	
+
 	return_array = _.map(csv_data, function(d) {
-		return {id: d.id, text: d.full_name + ", " + d.job_title}
+		return {id: d.id, text: d.first_name + " " + d.last_name}
 	})
 
 	return return_array
 }
 
+
+// Want to get all trees, by tree size
 function get_tree_data(csv_data) {
 
-	//Error list will contain a list of messages that will be displayed
-	//if there are problems parsing the csv_data into a tree structure
-	var error_list = []
-	error_list = check_initial_csv(csv_data, error_list)
 
 	//The sapling will grow into a tree :-p
 	//Ids are unique so we can convert array of data into a dict with the id being the key
@@ -35,7 +33,7 @@ function get_tree_data(csv_data) {
 
 	// iterate through each key putting them with their parents
 
-	var ceo = null
+	var head_honchos = []
 	_.each(sapling, function(item, key) {
 		// Once we have an item:
 		// if it's got a parent, we need to find the parent, and add it to the parent's children
@@ -61,27 +59,35 @@ function get_tree_data(csv_data) {
 			}
 
 		} else {
-			ceo = item.id
+			head_honchos.push(item.id)
 		}
 
-	}) 
+	})
 
-	//Finally check that the resultant tree seems to be well-formed
-	// error_list = check_final_tree(sapling)
-	if (error_list.length>0) {
-		var source = d3.select("#errormessage-template").html();
-	    var template = Handlebars.compile(source);
-		var html = template({errors:error_list});
-	    $("body").prepend(html);
-	}
+	trees = head_honchos.map(function(hh) {return sapling[hh]})
+	trees = _.sortBy(trees, child_count, "ascending").reverse()
+	_.each(trees, function(t) {t["parent"] = "hidden_node"})
+	tree = {"id": "hidden_node", "children": trees, "parent": ""}
 
-
-	return sapling[ceo]  //The sapling should now be a tree!
+	return tree  //The sapling should now be a tree!
 
 }
 
+function child_count(tree) {
+
+	if ("children" in tree) {
+		child_counts = _.map(tree["children"], function(child) {
+			return child_count(child)
+		})
+
+       return 1 + _.reduce(child_counts, function(a,b) {return a+b})
+	} else {
+		return 1
+	}
+}
+
 function check_initial_csv(csv_data, error_list) {
-	//Check there is a single node with a blank parent 
+	//Check there is a single node with a blank parent
 
 	var blank_parents = _.reduce(csv_data, function(memo, d) {
 		return memo + (d.parent == "");
@@ -110,7 +116,7 @@ function check_initial_csv(csv_data, error_list) {
 		}
 	})
 
-	
+
 	//Check no two nodes have the same id
 	var groups = _.groupBy(csv_data, function(d) {
 		return d.id
@@ -149,7 +155,7 @@ function find_in_array_of_trees(array_of_trees, parent_id) {
 		}
 	}
 
-	
+
 	_.each(array_of_trees, function(item, key) {
 
 		// console.log("This item has id: " +  item.id + " and parent id " + item.parent)
@@ -165,49 +171,3 @@ function find_in_array_of_trees(array_of_trees, parent_id) {
 
 	return found_item
 }
-
-//Note the following is an example of the conversion we want to make
-
-// id									parent
-// ecbaee24da9c6ae57bd195bb53a8c157	
-// 9b96247538f35dbe04e86200ebb4908b	ecbaee24da9c6ae57bd195bb53a8c157
-// 15a987d0c84833ca4bfe61c77dae1fc0	9b96247538f35dbe04e86200ebb4908b
-// 491ee869a19bd81bbe9fb39dc924d238	15a987d0c84833ca4bfe61c77dae1fc0
-// da7c474ce0cda9e6591a6e5c7dcefe42	ecbaee24da9c6ae57bd195bb53a8c157
-// cf27768cffb96d72b40b2a2801164a40	da7c474ce0cda9e6591a6e5c7dcefe42
-
-
-// {
-//    "parent":"",
-//    "id":"ecbaee24da9c6ae57bd195bb53a8c157",
-//    "children":[
-//       {
-//          "parent":"ecbaee24da9c6ae57bd195bb53a8c157",
-//          "id":"da7c474ce0cda9e6591a6e5c7dcefe42",
-//          "children":[
-//             {
-//                "parent":"da7c474ce0cda9e6591a6e5c7dcefe42",
-//                "id":"cf27768cffb96d72b40b2a2801164a40",
-//                "children":null,
-//             }
-//          ],
-//       },
-//       {
-//          "parent":"ecbaee24da9c6ae57bd195bb53a8c157",
-//          "id":"9b96247538f35dbe04e86200ebb4908b",
-//          "children":[
-//             {
-//                "parent":"9b96247538f35dbe04e86200ebb4908b",
-//                "id":"15a987d0c84833ca4bfe61c77dae1fc0",
-//                "children":[
-//                   {
-//                      "parent":"15a987d0c84833ca4bfe61c77dae1fc0",
-//                      "id":"491ee869a19bd81bbe9fb39dc924d238",
-//                      "children":null,
-//                   }
-//                ],
-//             }
-//          ],
-//       }
-//    ],
-// }

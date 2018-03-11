@@ -1,7 +1,7 @@
 // Main container for the organisation chart - writes the org chart into the dom element specified by the jquery selection
 function organisation_chart(all_data, selection_string) {
 
-    var MIN_HEIGHT = 400    
+    var MIN_HEIGHT = 400
     var NODE_HEIGHT = 35
     var NODE_SPACING = 10
     var FONT_SIZE = 10
@@ -104,7 +104,7 @@ function organisation_chart(all_data, selection_string) {
     function get_max_height() {
 
         var count_nodes = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  //count of nodes at each level
-        var gaps =  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] 
+        var gaps =  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         var gaps_2 = 0
         var max_level = 0
 
@@ -150,9 +150,9 @@ function organisation_chart(all_data, selection_string) {
         //Does the height need to be updated?
         var new_height =  get_max_height(root)
 
-        // If getting bigger, immediately make svg bigger 
+        // If getting bigger, immediately make svg bigger
         var new_width = (find_depth())*LINK_WIDTH
-        
+
         // Transition to new height and width
         d3.select(selection_string)
             .select("svg")
@@ -203,24 +203,24 @@ function organisation_chart(all_data, selection_string) {
 
         nodeEnter
             .append("foreignObject")
-        
+
             .attr("width", function(d) {
                 return LINK_WIDTH
             })
             .attr("height", NODE_HEIGHT)
 
             .attr("y", function(d) {
-                return NODE_HEIGHT 
+                return NODE_HEIGHT
             })
             .attr("x", "-100")
             .attr("class", "foo")
             .append("xhtml:div")
-            
+
             .attr("dy", "0")
             .attr("x", function(d) {
                 return 10
             })
-     
+
 
         // Transition nodes to their new position.
         var nodeUpdate = node.transition()
@@ -233,7 +233,7 @@ function organisation_chart(all_data, selection_string) {
         node.select("foreignObject").attr("height",NODE_HEIGHT)
         node.select("foreignObject").attr("width",LINK_WIDTH)
 
-       
+
         node
             .select(".foo")
             .attr("y", function(d) {
@@ -242,31 +242,32 @@ function organisation_chart(all_data, selection_string) {
             .attr("x", function(d) {
                 return -(NODE_HEIGHT/2)
             })
-         
-           
+
+
             .html(function(d) {
-                var source = d3.select("#foreignobject-template").html();
-                var template = Handlebars.compile(source);
+                // var source = d3.select("#foreignobject-template").html();
+                // var template = Handlebars.compile(source);
 
-                var template_data = {}
-                template_data.full_name = d.full_name
-                template_data.job_title = d.job_title
-                template_data.mugshot_url_template = d.mugshot_url_template.replace("200","200").replace("200","200") 
-                template_data.imgwidth = NODE_HEIGHT +'px'
-                template_data.imgheight =  NODE_HEIGHT +'px'
-                template_data.totalheight = NODE_HEIGHT + 'px'
-                template_data.textwidth = (LINK_WIDTH - (NODE_HEIGHT)-20) + "px"
-                template_data.bordercolour = color_scale(d.messages_in_last_180_days)
-                template_data.user_id = d.id
-                template_data.font_size = FONT_SIZE
-                if (NODE_HEIGHT > FONT_SIZE) {
-                template_data.include_job_title = true
-                } else {
-                    template_data.include_job_title = false
-                }
+                // var template_data = {}
+                // template_data.full_name = d.full_name
+                // template_data.job_title = d.job_title
+                // template_data.mugshot_url_template = d.mugshot_url_template.replace("200","200").replace("200","200")
+                // template_data.imgwidth = NODE_HEIGHT +'px'
+                // template_data.imgheight =  NODE_HEIGHT +'px'
+                // template_data.totalheight = NODE_HEIGHT + 'px'
+                // template_data.textwidth = (LINK_WIDTH - (NODE_HEIGHT)-20) + "px"
+                // template_data.bordercolour = color_scale(d.messages_in_last_180_days)
+                // template_data.user_id = d.id
+                // template_data.font_size = FONT_SIZE
+                // if (NODE_HEIGHT > FONT_SIZE) {
+                // template_data.include_job_title = true
+                // } else {
+                //     template_data.include_job_title = false
+                // }
 
 
-                var html = template(template_data);
+                // var html = template(template_data);
+                html = d.first_name + " " + d.last_name
                 return html
             })
             .on("mouseover", function(d) {
@@ -274,7 +275,7 @@ function organisation_chart(all_data, selection_string) {
                 create_stats_card(d)
 
             })
-            
+
 
         nodeUpdate.select("circle")
             .attr("r", function(d) {
@@ -333,7 +334,7 @@ function organisation_chart(all_data, selection_string) {
             .duration(duration)
             .attr("d", diagonal)
 
-        
+
         // Transition exiting nodes to the parent's new position.
         link.exit().transition()
             .duration(duration)
@@ -378,12 +379,12 @@ function organisation_chart(all_data, selection_string) {
             set_false(root)
         }
 
-        //Search through the nodes of the organisation chart keeping track of 
+        //Search through the nodes of the organisation chart keeping track of
         //the full line management chain for the staff member being searched for
 
 
-        //Strategy is to collapse all nodes in the data structure and then open 
-        //them back out one by one 
+        //Strategy is to collapse all nodes in the data structure and then open
+        //them back out one by one
         if (root.children) {
             root.children.forEach(collapse);
         }
@@ -495,7 +496,7 @@ function organisation_chart(all_data, selection_string) {
     function create_profile_card(d) {
         var div = d3.select(".profile_card")
 
-        
+
         div.html(function(d2) {
             var source = d3.select("#profile-template").html();
             var template = Handlebars.compile(source);
@@ -555,9 +556,9 @@ function organisation_chart(all_data, selection_string) {
     }
 }
 
-d3.csv("data/random_data_flat_file.csv", function(csv_data) {
+d3.csv("tests/for_org_chart.csv", function(csv_data) {
 
-  
+
   var data = csv_to_json(csv_data)
   var chart = organisation_chart(data, "#svgholder")
 
@@ -575,14 +576,14 @@ d3.csv("data/random_data_flat_file.csv", function(csv_data) {
         chart.tree_search(search_id)
     });
 
-  
+
 });
 
 // Test
 // d3.csv("tests/6_nodes_two_ceos_duplicated_records.csv", function(csv_data) {
-  
+
 //   var data = csv_to_json(csv_data)
-  
+
 // });
 
 // To be used if data is already in json format
@@ -704,15 +705,15 @@ function collapse(d) {
     if (d.children) {
         d._children = d.children;
         d._children.forEach(collapse);
-        d.children = null; //_children is potential childern, children is displayed children 
+        d.children = null; //_children is potential childern, children is displayed children
     }
 }
 
-function expand(d){   
+function expand(d){
     var children = (d.children)?d.children:d._children;
-    if (d._children) {        
+    if (d._children) {
         d.children = d._children;
-        d._children = null;       
+        d._children = null;
     }
     if(children)
       children.forEach(expand);
